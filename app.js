@@ -1,6 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
-
+const cors = require("cors");
 const app = express();
 const port = 3099;
 
@@ -24,6 +24,9 @@ mongoose
 
 const BlogModel = require("./Models/BlogPost");
 
+app.use(express.json());
+app.use(cors());
+
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });
@@ -32,10 +35,11 @@ app.get("/", (req, res) => {
 app.get("/blogs", (req, res) => {
   BlogModel.find()
     .then((result) => {
-      console.log(result);
+      res.send(result);
     })
     .catch((err) => {
       console.log(err);
+      res.status(404).send({ error: "Blogs not found" });
     });
 });
 
@@ -44,10 +48,11 @@ app.get("/blogs/:id", (req, res) => {
   const id = req.params.id;
   BlogModel.findById(id)
     .then((result) => {
-      console.log(result);
+      res.send(result);
     })
     .catch((err) => {
       console.log(err);
+      res.status(404).send({ error: "Blog not found" });
     });
 });
 
@@ -58,9 +63,11 @@ app.post("/blogs", (req, res) => {
     .save()
     .then((result) => {
       console.log(result);
+      res.send(result);
     })
     .catch((err) => {
       console.log(err);
+      res.status(404).send({ error: "Blog can't be added" });
     });
 });
 
@@ -73,5 +80,11 @@ app.delete("/blogs/:id", (req, res) => {
     })
     .catch((err) => {
       console.log(err);
+      res.status(404).send({ error: "Blog can't deleted" });
     });
+});
+
+// Error route
+app.use((req, res) => {
+  res.status(404).send("Page not found");
 });
