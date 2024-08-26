@@ -77,6 +77,7 @@ app.delete("/blogs/:id", (req, res) => {
   BlogModel.findByIdAndDelete(id)
     .then((result) => {
       console.log("Deleted Successfully");
+      res.send(result);
     })
     .catch((err) => {
       console.log(err);
